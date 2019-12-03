@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src"
+  },
+  "include": [
+    "src",
+    "test/mock_data",
+    "test/Components/OutputMessage/index.test.jsx"
+  ]
+}

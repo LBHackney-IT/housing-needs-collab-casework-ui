@@ -1,0 +1,130 @@
+/* * {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+} */
+
+* + * {
+  margin-top: 0 !important;
+}
+
+a,
+a:visited {
+  color: #00664f;
+}
+
+strong {
+  color: black;
+}
+
+h1 {
+  font-size: 1.6em;
+}
+
+h2 {
+  font-size: 1.4em;
+}
+
+h3 {
+  font-size: 1.2em;
+}
+
+h4 {
+  font-size: 1em;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: normal;
+  margin-bottom: 15px;
+}
+
+p {
+  margin-bottom: 15px;
+}
+
+#root {
+  margin-top: 0;
+}
+
+#main-wrapper {
+  padding: 15px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 1;
+  padding: 15px;
+}
+
+.wait-time {
+  font-size: 30pt;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.wait-time .time {
+  color: #00664f;
+}
+
+.why-is-this .highlight {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+  padding: 15px;
+}
+
+.why-is-this .highlight-header {
+  display: flex;
+  flex-direction: row;
+  font-size: 30pt;
+  font-weight: bolder;
+  margin-bottom: 10px;
+}
+
+.why-is-this .highlight-image {
+  display: flex;
+  padding-right: 10px;
+}
+
+.why-is-this .highlight-image img {
+  width: 50px;
+}
+
+.why-is-this .highlight-text {
+  display: flex;
+}
+
+.lbh-page-announcement {
+  border: 0;
+  background-color: #e5f0ed;
+}
+
+.warning-wrapper {
+  background-color: #e5f0ed;
+  padding: 15px;
+}
+
+.govuk-details__text {
+  margin-top: 15px !important;
+  background-color: white;
+}
+
+.lbh-button img {
+  width: 15px;
+  margin-right: 15px;
+}
+
+.recommendations li {
+  padding: 15px;
+}
