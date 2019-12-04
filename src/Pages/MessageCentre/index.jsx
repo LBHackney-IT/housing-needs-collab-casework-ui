@@ -5,13 +5,23 @@ import './index.css';
 export default class MessageCentre extends Component {
   constructor(props) {
     super(props);
-    this.state = { contacts: [], filteredContacts: [], selectedMessages: [] };
+    this.state = {
+      contacts: [],
+      filteredContacts: [],
+      selectedContact: {},
+      selectedMessages: []
+    };
     this.filterContacts = this.filterContacts.bind(this);
   }
 
   async componentDidMount() {
     const contacts = await FetchContacts();
-    this.setState({ contacts, filteredContacts: contacts });
+    const selectedContact = contacts.length > 0 ? contacts[0] : {};
+    this.setState({ contacts, filteredContacts: contacts, selectedContact });
+
+    if (selectedContact.id) {
+      await this.selectContact(selectedContact);
+    }
   }
 
   async filterContacts(e) {
@@ -26,9 +36,9 @@ export default class MessageCentre extends Component {
     this.setState({ filteredContacts });
   }
 
-  async selectContact(id) {
-    const selectedMessages = await FetchMessages(id);
-    this.setState({ selectedMessages });
+  async selectContact(selectedContact) {
+    const selectedMessages = await FetchMessages(selectedContact.id);
+    this.setState({ selectedContact, selectedMessages });
   }
 
   render() {
@@ -37,19 +47,36 @@ export default class MessageCentre extends Component {
         <div className="contactPane">
           <div className="contactTools">
             <div className="newContact">
-              <button>Message New Contact</button>
+              <button className="govuk-button lbh-button">
+                Message New Contact
+              </button>
             </div>
             <div className="findContact">
-              <input type="text" onChange={this.filterContacts} />
+              <input
+                type="text"
+                className="govuk-input"
+                onChange={this.filterContacts}
+                placeholder="Find contact..."
+              />
             </div>
           </div>
           <ul>
             {this.state.filteredContacts.map((c, i) => {
               return (
-                <li key={i} onClick={() => this.selectContact(c.id)}>
+                <li
+                  key={i}
+                  className={
+                    c.id === this.state.selectedContact.id ? 'selected' : ''
+                  }
+                  onClick={() => this.selectContact(c)}
+                >
                   <div className="contactName">{c.name}</div>
                   <div className="contactNumber">{c.number}</div>
-                  <div className="lastMessage">{c.lastMessage.message}</div>
+                  <div className="lastMessage">
+                    {c.lastMessage.message.length > 36
+                      ? `${c.lastMessage.message.substring(0, 34)}...`
+                      : c.lastMessage.message}
+                  </div>
                 </li>
               );
             })}
@@ -58,7 +85,14 @@ export default class MessageCentre extends Component {
         <div className="messagePane">
           <ul>
             {this.state.selectedMessages.map((m, i) => {
-              return <li key={i}>{m.message}</li>;
+              console.log(m);
+              return (
+                <li key={i}>
+                  <div className={m.outgoing ? 'me' : 'them'}>
+                    <div className="message">{m.message}</div>
+                  </div>
+                </li>
+              );
             })}
           </ul>
         </div>

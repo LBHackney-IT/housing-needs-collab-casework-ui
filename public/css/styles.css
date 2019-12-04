@@ -1,9 +1,10 @@
-/* * {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
-} */
-
 * + * {
   margin-top: 0 !important;
+}
+
+.govuk-template {
+  height: 100%;
+  overflow: hidden;
 }
 
 a,
@@ -51,6 +52,11 @@ p {
   padding: 15px;
 }
 
+.lbh-container {
+  max-width: 1140px !important;
+}
+
+/* 
 .row {
   display: flex;
   flex-direction: row;
@@ -127,4 +133,4 @@ p {
 
 .recommendations li {
   padding: 15px;
-}
+} */

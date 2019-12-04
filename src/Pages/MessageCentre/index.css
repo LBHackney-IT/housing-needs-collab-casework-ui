@@ -1,13 +1,80 @@
 #messageCentre {
   display: flex;
   flex-direction: row;
-  font-size: 11pt;
+  font-size: 12pt;
+}
+
+#messageCentre ul {
+  list-style: none;
+}
+
+.contactTools > div {
+  margin-bottom: 15px;
 }
 
 .contactPane {
-  width: 25%;
+  width: 30%;
+  margin-right: 20px;
+}
+
+.contactPane ul {
+  overflow: auto;
+  max-height: 100vh;
+}
+
+.contactPane li {
+  padding: 15px 5px;
+  border-bottom: 1px solid #eee;
+}
+
+.contactPane li.selected {
+  padding: 15px 5px;
+  border-bottom: 1px solid #eee;
+  background-color: #f5f5f5;
+}
+
+.contactName {
+  font-weight: bold;
+}
+
+.contactNumber {
+  font-size: 11pt;
+}
+
+.contactLastMessage {
+  font-size: 11pt;
 }
 
 .messagePane {
-  width: 75%;
+  width: 70%;
+}
+
+.messagePane ul {
+  overflow-y: scroll;
+  max-height: 100vh;
+}
+
+.messagePane .them {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.messagePane .me {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.messagePane .them .message {
+  background-color: #ffda5a;
+}
+
+.messagePane .me .message {
+  background-color: #9ae1ff;
+}
+
+.messagePane .message {
+  padding: 10px;
+  border-radius: 5px;
+  max-width: 80%;
+  margin-bottom: 25px;
 }
