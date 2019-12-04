@@ -1,0 +1,13 @@
+#messageCentre {
+  display: flex;
+  flex-direction: row;
+  font-size: 11pt;
+}
+
+.contactPane {
+  width: 25%;
+}
+
+.messagePane {
+  width: 75%;
+}

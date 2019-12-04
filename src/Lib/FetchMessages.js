@@ -1,8 +1,8 @@
 import { AuthHeader } from '.';
 
-async function FetchMessages() {
+async function FetchMessages(id) {
   const response = await fetch(
-    `${process.env.REACT_APP_HN_API_URL}/messages`,
+    `${process.env.REACT_APP_HN_API_URL}/contacts/${id}/messages`,
     AuthHeader
   );
 
