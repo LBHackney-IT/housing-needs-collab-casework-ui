@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 import { FetchContacts, FetchMessages } from '../../Lib';
 import './index.css';
 
@@ -24,6 +25,12 @@ export default class MessageCentre extends Component {
     }
   }
 
+  async componentDidUpdate() {
+    // scroll to latest message
+    const pane = document.querySelector('.messagePane ul');
+    pane.scrollTop = pane.scrollHeight;
+  }
+
   async filterContacts(e) {
     const includes = (str, sub) =>
       str && str.toLowerCase().includes(sub.toLowerCase());
@@ -41,7 +48,16 @@ export default class MessageCentre extends Component {
     this.setState({ selectedContact, selectedMessages });
   }
 
+  async sendMessage(msgBox) {
+    if (msgBox.value) {
+      console.log(msgBox.value); // send it
+      msgBox.value = '';
+    }
+  }
+
   render() {
+    let lastDate;
+
     return (
       <div id="messageCentre">
         <div className="contactPane">
@@ -91,9 +107,22 @@ export default class MessageCentre extends Component {
         <div className="messagePane">
           <ul>
             {this.state.selectedMessages.map((m, i) => {
-              console.log(m);
+              const mDate = moment(m.time).format('DD/MM/YYYY');
+
+              let dateComponent;
+
+              if (lastDate !== mDate) {
+                lastDate = mDate;
+                dateComponent = (
+                  <div className="date">
+                    <div className="dateText">{lastDate}</div>
+                  </div>
+                );
+              }
+
               return (
                 <li key={i}>
+                  {dateComponent}
                   <div className={m.outgoing ? 'me' : 'them'}>
                     <div className="message">{m.message}</div>
                   </div>
@@ -101,6 +130,18 @@ export default class MessageCentre extends Component {
               );
             })}
           </ul>
+          <div className="messageEntry">
+            <input
+              type="text"
+              className="govuk-input"
+              placeholder="Type a message"
+              onKeyPress={event => {
+                if (event.key === 'Enter') {
+                  this.sendMessage(event.target);
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
     );
