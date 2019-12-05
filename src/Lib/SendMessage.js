@@ -1,0 +1,22 @@
+async function SendMessage(id, message) {
+  var headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Origin': '*'
+  };
+
+  const response = await fetch(
+    `${process.env.REACT_APP_HN_API_URL}/contacts/${id}/messages`,
+    {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({
+        id: id,
+        message: message
+      })
+    }
+  );
+
+  return await response.json();
+}
+
+export default SendMessage;

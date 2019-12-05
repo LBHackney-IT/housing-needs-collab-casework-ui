@@ -10,7 +10,8 @@ export default class MessageCentre extends Component {
       contacts: [],
       filteredContacts: [],
       selectedContact: {},
-      selectedMessages: []
+      selectedMessages: [],
+      messageNew: false
     };
     this.filterContacts = this.filterContacts.bind(this);
   }
@@ -28,8 +29,16 @@ export default class MessageCentre extends Component {
   async componentDidUpdate() {
     // scroll to latest message
     const pane = document.querySelector('.messagePane ul');
-    pane.scrollTop = pane.scrollHeight;
+    if (pane) {
+      pane.scrollTop = pane.scrollHeight;
+    }
   }
+
+  toggleNew = () => {
+    this.setState(state => {
+      return { messageNew: !state.messageNew };
+    });
+  };
 
   async filterContacts(e) {
     const includes = (str, sub) =>
@@ -49,10 +58,16 @@ export default class MessageCentre extends Component {
   }
 
   async sendMessage(msgBox) {
-    if (msgBox.value) {
-      console.log(msgBox.value); // send it
-      msgBox.value = '';
+    if (!msgBox.value) return;
+
+    if (this.state.messageNew) {
+      // create contact
+      // send to new contact
+      this.toggleNew();
+    } else {
+      // send to current
     }
+    msgBox.value = '';
   }
 
   render() {
@@ -63,8 +78,11 @@ export default class MessageCentre extends Component {
         <div className="contactPane">
           <div className="contactTools">
             <div className="newContact">
-              <button className="govuk-button lbh-button">
-                Message New Contact
+              <button
+                className="govuk-button lbh-button"
+                onClick={this.toggleNew}
+              >
+                {this.state.messageNew ? 'Cancel' : 'Message New Contact'}
               </button>
             </div>
             <div className="findContact">
@@ -105,31 +123,49 @@ export default class MessageCentre extends Component {
           </ul>
         </div>
         <div className="messagePane">
-          <ul>
-            {this.state.selectedMessages.map((m, i) => {
-              const mDate = moment(m.time).format('DD/MM/YYYY');
+          {this.state.messageNew && (
+            <div>
+              <p>
+                <label className="govuk-label lbh-label" htmlFor="name">
+                  Name
+                </label>
+                <input type="text" name="name" className="govuk-input" />
+              </p>
+              <p>
+                <label className="govuk-label lbh-label" htmlFor="number">
+                  Number
+                </label>
+                <input type="text" name="number" className="govuk-input" />
+              </p>
+            </div>
+          )}
+          {!this.state.messageNew && (
+            <ul>
+              {this.state.selectedMessages.map((m, i) => {
+                const mDate = moment(m.time).format('DD/MM/YYYY');
 
-              let dateComponent;
+                let dateComponent;
 
-              if (lastDate !== mDate) {
-                lastDate = mDate;
-                dateComponent = (
-                  <div className="date">
-                    <div className="dateText">{lastDate}</div>
-                  </div>
+                if (lastDate !== mDate) {
+                  lastDate = mDate;
+                  dateComponent = (
+                    <div className="date">
+                      <div className="dateText">{lastDate}</div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <li key={i}>
+                    {dateComponent}
+                    <div className={m.outgoing ? 'me' : 'them'}>
+                      <div className="message">{m.message}</div>
+                    </div>
+                  </li>
                 );
-              }
-
-              return (
-                <li key={i}>
-                  {dateComponent}
-                  <div className={m.outgoing ? 'me' : 'them'}>
-                    <div className="message">{m.message}</div>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+              })}
+            </ul>
+          )}
           <div className="messageEntry">
             <input
               type="text"
