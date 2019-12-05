@@ -62,6 +62,7 @@ export default class MessageCentre extends Component {
           </div>
           <ul>
             {this.state.filteredContacts.map((c, i) => {
+              console.log(c);
               return (
                 <li
                   key={i}
@@ -70,7 +71,12 @@ export default class MessageCentre extends Component {
                   }
                   onClick={() => this.selectContact(c)}
                 >
-                  <div className="contactName">{c.name}</div>
+                  <div className="contactName">
+                    {c.name}{' '}
+                    {c.lastMessage.direction === 'incoming' && (
+                      <div className="yourTurn">YOUR TURN</div>
+                    )}
+                  </div>
                   <div className="contactNumber">{c.number}</div>
                   <div className="lastMessage">
                     {c.lastMessage.message.length > 36

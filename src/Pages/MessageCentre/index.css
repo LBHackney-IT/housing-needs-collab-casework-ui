@@ -35,6 +35,16 @@
 
 .contactName {
   font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+}
+
+.yourTurn {
+  background-color: purple;
+  color: white;
+  font-weight: normal;
+  font-size: 9pt;
+  padding: 2px 5px;
 }
 
 .contactNumber {
