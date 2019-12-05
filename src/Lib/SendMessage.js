@@ -10,7 +10,6 @@ async function SendMessage(id, message) {
       method: 'POST',
       headers: headers,
       body: JSON.stringify({
-        id: id,
         message: message
       })
     }

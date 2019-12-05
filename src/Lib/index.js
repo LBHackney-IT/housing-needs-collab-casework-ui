@@ -1,5 +1,7 @@
 import FetchMessages from './FetchMessages';
 import FetchContacts from './FetchContacts';
+import SendMessage from './SendMessage';
+import CreateContact from './CreateContact';
 import { hackneyToken } from './Cookie';
 
 const AuthHeader = {
@@ -9,4 +11,4 @@ const AuthHeader = {
   }
 };
 
-export { AuthHeader, FetchMessages, FetchContacts };
+export { AuthHeader, FetchMessages, FetchContacts, SendMessage, CreateContact };

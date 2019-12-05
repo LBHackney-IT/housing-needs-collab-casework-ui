@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { FetchContacts, FetchMessages } from '../../Lib';
+import {
+  FetchContacts,
+  FetchMessages,
+  SendMessage,
+  CreateContact
+} from '../../Lib';
 import './index.css';
 
 export default class MessageCentre extends Component {
@@ -11,15 +16,29 @@ export default class MessageCentre extends Component {
       filteredContacts: [],
       selectedContact: {},
       selectedMessages: [],
-      messageNew: false
+      messageNew: false,
+      newContact: { name: '', number: '', jigsawId: null }
     };
     this.filterContacts = this.filterContacts.bind(this);
   }
 
+  async loadContacts() {
+    let contacts = await FetchContacts();
+    contacts = contacts.sort((a, b) => {
+      return (
+        a.lastMessage &&
+        b.lastMessage &&
+        a.lastMessage.time < b.lastMessage.time
+      );
+    });
+    this.setState({ contacts, filteredContacts: contacts });
+  }
+
   async componentDidMount() {
-    const contacts = await FetchContacts();
-    const selectedContact = contacts.length > 0 ? contacts[0] : {};
-    this.setState({ contacts, filteredContacts: contacts, selectedContact });
+    await this.loadContacts();
+    const selectedContact =
+      this.state.contacts.length > 0 ? this.state.contacts[0] : {};
+    this.setState({ filteredContacts: this.state.contacts, selectedContact });
 
     if (selectedContact.id) {
       await this.selectContact(selectedContact);
@@ -57,17 +76,42 @@ export default class MessageCentre extends Component {
     this.setState({ selectedContact, selectedMessages });
   }
 
+  updateNewContactState = e => {
+    let newContact = this.state.newContact;
+    newContact[e.target.name] = e.target.value;
+    this.setState({ newContact });
+  };
+
   async sendMessage(msgBox) {
     if (!msgBox.value) return;
 
     if (this.state.messageNew) {
       // create contact
-      // send to new contact
-      this.toggleNew();
+      let contact = await CreateContact(this.state.newContact);
+      await SendMessage(contact.id, msgBox.value);
+      await this.loadContacts();
+      let selectedContact = this.state.contacts.filter(
+        c => c.id === contact.id
+      );
+      if (selectedContact.length === 1) {
+        await this.selectContact(selectedContact[0]);
+        // send to new contact
+        this.toggleNew();
+      }
     } else {
       // send to current
+      await SendMessage(this.state.selectedContact.id, msgBox.value);
+      await this.selectContact(this.state.selectedContact);
     }
     msgBox.value = '';
+  }
+
+  lastMessage(contact) {
+    if (contact.lastMessage && contact.lastMessage.message) {
+      return contact.lastMessage.message.length > 36
+        ? `${contact.lastMessage.message.substring(0, 34)}...`
+        : contact.lastMessage.message;
+    }
   }
 
   render() {
@@ -96,7 +140,6 @@ export default class MessageCentre extends Component {
           </div>
           <ul>
             {this.state.filteredContacts.map((c, i) => {
-              console.log(c);
               return (
                 <li
                   key={i}
@@ -107,16 +150,13 @@ export default class MessageCentre extends Component {
                 >
                   <div className="contactName">
                     {c.name}{' '}
-                    {c.lastMessage.direction === 'incoming' && (
-                      <div className="yourTurn">YOUR TURN</div>
-                    )}
+                    {c.lastMessage &&
+                      c.lastMessage.direction === 'incoming' && (
+                        <div className="yourTurn">YOUR TURN</div>
+                      )}
                   </div>
                   <div className="contactNumber">{c.number}</div>
-                  <div className="lastMessage">
-                    {c.lastMessage.message.length > 36
-                      ? `${c.lastMessage.message.substring(0, 34)}...`
-                      : c.lastMessage.message}
-                  </div>
+                  <div className="lastMessage">{this.lastMessage(c)}</div>
                 </li>
               );
             })}
@@ -129,41 +169,55 @@ export default class MessageCentre extends Component {
                 <label className="govuk-label lbh-label" htmlFor="name">
                   Name
                 </label>
-                <input type="text" name="name" className="govuk-input" />
+                <input
+                  type="text"
+                  name="name"
+                  className="govuk-input"
+                  onChange={this.updateNewContactState}
+                  value={this.state.newContact.name}
+                />
               </p>
               <p>
                 <label className="govuk-label lbh-label" htmlFor="number">
                   Number
                 </label>
-                <input type="text" name="number" className="govuk-input" />
+                <input
+                  type="text"
+                  name="number"
+                  className="govuk-input"
+                  onChange={this.updateNewContactState}
+                  value={this.state.newContact.number}
+                />
               </p>
             </div>
           )}
           {!this.state.messageNew && (
             <ul>
-              {this.state.selectedMessages.map((m, i) => {
-                const mDate = moment(m.time).format('DD/MM/YYYY');
+              {this.state.selectedMessages
+                .sort((a, b) => (a.time > b.time ? 1 : -1))
+                .map((m, i) => {
+                  const mDate = moment(m.time).format('DD/MM/YYYY');
 
-                let dateComponent;
+                  let dateComponent;
 
-                if (lastDate !== mDate) {
-                  lastDate = mDate;
-                  dateComponent = (
-                    <div className="date">
-                      <div className="dateText">{lastDate}</div>
-                    </div>
+                  if (lastDate !== mDate) {
+                    lastDate = mDate;
+                    dateComponent = (
+                      <div className="date">
+                        <div className="dateText">{lastDate}</div>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <li key={i}>
+                      {dateComponent}
+                      <div className={m.outgoing ? 'me' : 'them'}>
+                        <div className="message">{m.message}</div>
+                      </div>
+                    </li>
                   );
-                }
-
-                return (
-                  <li key={i}>
-                    {dateComponent}
-                    <div className={m.outgoing ? 'me' : 'them'}>
-                      <div className="message">{m.message}</div>
-                    </div>
-                  </li>
-                );
-              })}
+                })}
             </ul>
           )}
           <div className="messageEntry">
