@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import moment from 'moment';
+import MessageNewContact from '../../Components/MessageNewContact';
+import SelectedMessages from '../../Components/SelectedMessages';
 import {
   FetchContacts,
   FetchMessages,
@@ -164,62 +165,13 @@ export default class MessageCentre extends Component {
           </ul>
         </div>
         <div className="messagePane">
-          {this.state.messageNew && (
-            <div>
-              <p>
-                <label className="govuk-label lbh-label" htmlFor="name">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  className="govuk-input"
-                  onChange={this.updateNewContactState}
-                  value={this.state.newContact.name}
-                />
-              </p>
-              <p>
-                <label className="govuk-label lbh-label" htmlFor="number">
-                  Number
-                </label>
-                <input
-                  type="text"
-                  name="number"
-                  className="govuk-input"
-                  onChange={this.updateNewContactState}
-                  value={this.state.newContact.number}
-                />
-              </p>
-            </div>
-          )}
-          {!this.state.messageNew && (
-            <ul>
-              {this.state.selectedMessages
-                .sort((a, b) => (a.time > b.time ? 1 : -1))
-                .map((m, i) => {
-                  const mDate = moment(m.time).format('DD/MM/YYYY');
-
-                  let dateComponent;
-
-                  if (lastDate !== mDate) {
-                    lastDate = mDate;
-                    dateComponent = (
-                      <div className="date">
-                        <div className="dateText">{lastDate}</div>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <li key={i}>
-                      {dateComponent}
-                      <div className={m.outgoing ? 'me' : 'them'}>
-                        <div className="message">{m.message}</div>
-                      </div>
-                    </li>
-                  );
-                })}
-            </ul>
+          {this.state.messageNew ? (
+            <MessageNewContact
+              updateNewContactState={this.updateNewContactState.bind(this)}
+              newContact={this.state.newContact}
+            />
+          ) : (
+            <SelectedMessages messages={this.state.selectedMessages} />
           )}
           <MessageEntry onSend={this.sendMessage} />
         </div>

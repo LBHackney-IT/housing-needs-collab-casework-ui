@@ -82,10 +82,12 @@
 
 .messagePane .them .message {
   background-color: #ffda5a;
+  text-align: left;
 }
 
 .messagePane .me .message {
   background-color: #9ae1ff;
+  text-align: right;
 }
 
 .messagePane .message {
