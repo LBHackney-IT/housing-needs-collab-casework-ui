@@ -1,0 +1,27 @@
+.messageEntry{
+  width:100%;
+}
+
+.messageEntry textarea{
+  min-height:100px;
+  max-height:250px;
+  grid-area: entry;
+  width:100%;
+}
+
+
+.messageEntry .button{
+  grid-area: button;
+  align-self: end;
+}
+
+.messageEntry button{
+  width:100px;
+  margin-left:10px;
+}
+
+.messageEntry {
+  display:grid;
+  grid-template-columns: auto 110px;
+  grid-template-areas: "entry button";
+}

@@ -6,6 +6,7 @@ import {
   SendMessage,
   CreateContact
 } from '../../Lib';
+import MessageEntry from '../../Components/MessageEntry';
 import './index.css';
 
 export default class MessageCentre extends Component {
@@ -82,13 +83,13 @@ export default class MessageCentre extends Component {
     this.setState({ newContact });
   };
 
-  async sendMessage(msgBox) {
-    if (!msgBox.value) return;
+  sendMessage = async (message, cb) => {
+    if (!message) return;
 
     if (this.state.messageNew) {
       // create contact
       let contact = await CreateContact(this.state.newContact);
-      await SendMessage(contact.id, msgBox.value);
+      await SendMessage(contact.id, message);
       await this.loadContacts();
       let selectedContact = this.state.contacts.filter(
         c => c.id === contact.id
@@ -100,10 +101,10 @@ export default class MessageCentre extends Component {
       }
     } else {
       // send to current
-      await SendMessage(this.state.selectedContact.id, msgBox.value);
+      await SendMessage(this.state.selectedContact.id, message);
       await this.selectContact(this.state.selectedContact);
     }
-    msgBox.value = '';
+    cb();
   }
 
   lastMessage(contact) {
@@ -220,18 +221,7 @@ export default class MessageCentre extends Component {
                 })}
             </ul>
           )}
-          <div className="messageEntry">
-            <input
-              type="text"
-              className="govuk-input"
-              placeholder="Type a message"
-              onKeyPress={event => {
-                if (event.key === 'Enter') {
-                  this.sendMessage(event.target);
-                }
-              }}
-            />
-          </div>
+          <MessageEntry onSend={this.sendMessage} />
         </div>
       </div>
     );
