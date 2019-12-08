@@ -7,6 +7,7 @@ export default class SelectedMessages extends Component {
     return (
       <ul>
         {this.props.messages
+          // sort needs to be moved server side
           .sort((a, b) => (a.time > b.time ? 1 : -1))
           .map((m, i) => {
             const mDate = moment(m.time).format('DD/MM/YYYY');

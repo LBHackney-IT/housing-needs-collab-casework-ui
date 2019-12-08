@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { CreateContact, SendMessage } from '../../Lib';
 import './index.css';
 
 export default class MessageEntry extends Component {
@@ -6,21 +7,30 @@ export default class MessageEntry extends Component {
     message: ''
   };
 
-  send = () => {
-    this.props.onSend && this.props.onSend(this.state.message, this.clearMessage);
-  };
+  sendMessage = async () => {
+    if (!this.state.message) return;
 
-  clearMessage = () => {
+    if (this.props.newContact.name) {
+      const contact = await CreateContact(this.props.newContact);
+      await SendMessage(contact.id, this.state.message);
+      this.props.toggleNewContact();
+    } else {
+      await SendMessage(this.props.selectedContact.id, this.state.message);
+    }
+    await this.props.loadContacts();
     this.setState({ message: '' });
   };
 
-  updateMessage = e => {
-    this.setState({ message: e.target.value, textareaHeight: e.target.scrollHeight });
+  updateMessage = event => {
+    this.setState({
+      message: event.target.value,
+      textareaHeight: event.target.scrollHeight
+    });
   };
 
   style() {
     return {
-      'height': `${this.state.textareaHeight}px`
+      height: `${this.state.textareaHeight}px`
     };
   }
 
@@ -36,7 +46,10 @@ export default class MessageEntry extends Component {
           value={this.state.message}
         />
         <div className="button">
-          <button className="govuk-button lbh-button" onClick={this.send}>
+          <button
+            className="govuk-button lbh-button"
+            onClick={this.sendMessage}
+          >
             Send
           </button>
         </div>

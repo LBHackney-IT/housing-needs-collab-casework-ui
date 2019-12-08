@@ -12,7 +12,7 @@ export default class MessageNewContact extends Component {
             type="text"
             name="name"
             className="govuk-input"
-            onChange={this.props.updateNewContactState}
+            onChange={this.props.updateNewContact}
           />
         </p>
         <p>
@@ -23,7 +23,7 @@ export default class MessageNewContact extends Component {
             type="text"
             name="number"
             className="govuk-input"
-            onChange={this.props.updateNewContactState}
+            onChange={this.props.updateNewContact}
           />
         </p>
       </div>

@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import MessageNewContact from '../../Components/MessageNewContact';
 import SelectedMessages from '../../Components/SelectedMessages';
-import {
-  FetchContacts,
-  FetchMessages,
-  SendMessage,
-  CreateContact
-} from '../../Lib';
+import Contacts from '../../Components/Contacts';
+import ContactTools from '../../Components/ContactTools';
+import { FetchContacts, FetchMessages } from '../../Lib';
 import MessageEntry from '../../Components/MessageEntry';
 import './index.css';
 
@@ -15,36 +12,16 @@ export default class MessageCentre extends Component {
     super(props);
     this.state = {
       contacts: [],
-      filteredContacts: [],
       selectedContact: {},
       selectedMessages: [],
-      messageNew: false,
-      newContact: { name: '', number: '', jigsawId: null }
+      messageNewContact: false,
+      newContact: {},
+      filter: ''
     };
-    this.filterContacts = this.filterContacts.bind(this);
-  }
-
-  async loadContacts() {
-    let contacts = await FetchContacts();
-    contacts = contacts.sort((a, b) => {
-      return (
-        a.lastMessage &&
-        b.lastMessage &&
-        a.lastMessage.time < b.lastMessage.time
-      );
-    });
-    this.setState({ contacts, filteredContacts: contacts });
   }
 
   async componentDidMount() {
     await this.loadContacts();
-    const selectedContact =
-      this.state.contacts.length > 0 ? this.state.contacts[0] : {};
-    this.setState({ filteredContacts: this.state.contacts, selectedContact });
-
-    if (selectedContact.id) {
-      await this.selectContact(selectedContact);
-    }
   }
 
   async componentDidUpdate() {
@@ -55,22 +32,20 @@ export default class MessageCentre extends Component {
     }
   }
 
-  toggleNew = () => {
-    this.setState(state => {
-      return { messageNew: !state.messageNew };
-    });
+  toggleNewContact = () => {
+    const messageNewContact = !this.state.messageNewContact;
+    const newContact = { name: '', number: '', jigsawId: null };
+    this.setState({ messageNewContact, newContact });
   };
 
-  async filterContacts(e) {
-    const includes = (str, sub) =>
-      str && str.toLowerCase().includes(sub.toLowerCase());
+  resetNewContact = () => {
+    this.setState({ newContact: { name: '', number: '', jigsawId: null } });
+  };
 
-    const filteredContacts = this.state.contacts.filter(
-      c =>
-        includes(c.name, e.target.value) || includes(c.number, e.target.value)
-    );
-
-    this.setState({ filteredContacts });
+  updateNewContact(event) {
+    let newContact = this.state.newContact;
+    newContact[event.target.name] = event.target.value;
+    this.setState({ newContact });
   }
 
   async selectContact(selectedContact) {
@@ -78,102 +53,60 @@ export default class MessageCentre extends Component {
     this.setState({ selectedContact, selectedMessages });
   }
 
-  updateNewContactState = e => {
-    let newContact = this.state.newContact;
-    newContact[e.target.name] = e.target.value;
-    this.setState({ newContact });
-  };
-
-  sendMessage = async (message, cb) => {
-    if (!message) return;
-
-    if (this.state.messageNew) {
-      // create contact
-      let contact = await CreateContact(this.state.newContact);
-      await SendMessage(contact.id, message);
-      await this.loadContacts();
-      let selectedContact = this.state.contacts.filter(
-        c => c.id === contact.id
+  async loadContacts() {
+    let contacts = await FetchContacts();
+    contacts = contacts.sort((a, b) => {
+      return (
+        a.lastMessage &&
+        b.lastMessage &&
+        new Date(b.lastMessage.time) - new Date(a.lastMessage.time)
       );
-      if (selectedContact.length === 1) {
-        await this.selectContact(selectedContact[0]);
-        // send to new contact
-        this.toggleNew();
-      }
-    } else {
-      // send to current
-      await SendMessage(this.state.selectedContact.id, message);
-      await this.selectContact(this.state.selectedContact);
+    });
+
+    if (contacts.length > 0) {
+      this.selectContact(contacts[0]);
     }
-    cb();
+
+    this.setState({
+      contacts
+    });
   }
 
-  lastMessage(contact) {
-    if (contact.lastMessage && contact.lastMessage.message) {
-      return contact.lastMessage.message.length > 36
-        ? `${contact.lastMessage.message.substring(0, 34)}...`
-        : contact.lastMessage.message;
-    }
+  setFilter(event) {
+    this.setState({ filter: event.currentTarget.value });
   }
 
   render() {
-    let lastDate;
-
     return (
       <div id="messageCentre">
         <div className="contactPane">
-          <div className="contactTools">
-            <div className="newContact">
-              <button
-                className="govuk-button lbh-button"
-                onClick={this.toggleNew}
-              >
-                {this.state.messageNew ? 'Cancel' : 'Message New Contact'}
-              </button>
-            </div>
-            <div className="findContact">
-              <input
-                type="text"
-                className="govuk-input"
-                onChange={this.filterContacts}
-                placeholder="Find contact..."
-              />
-            </div>
-          </div>
-          <ul>
-            {this.state.filteredContacts.map((c, i) => {
-              return (
-                <li
-                  key={i}
-                  className={
-                    c.id === this.state.selectedContact.id ? 'selected' : ''
-                  }
-                  onClick={() => this.selectContact(c)}
-                >
-                  <div className="contactName">
-                    {c.name}{' '}
-                    {c.lastMessage &&
-                      c.lastMessage.direction === 'incoming' && (
-                        <div className="yourTurn">YOUR TURN</div>
-                      )}
-                  </div>
-                  <div className="contactNumber">{c.number}</div>
-                  <div className="lastMessage">{this.lastMessage(c)}</div>
-                </li>
-              );
-            })}
-          </ul>
+          <ContactTools
+            messageNewContact={this.state.messageNewContact}
+            toggleNewContact={this.toggleNewContact.bind(this)}
+            setFilter={this.setFilter.bind(this)}
+          />
+          <Contacts
+            contacts={this.state.contacts}
+            selectedContact={this.state.selectedContact}
+            selectContact={this.selectContact.bind(this)}
+            filter={this.state.filter}
+          />
         </div>
         <div className="messagePane">
-          {this.state.messageNew ? (
+          {this.state.messageNewContact ? (
             <MessageNewContact
-              updateNewContactState={this.updateNewContactState.bind(this)}
               newContact={this.state.newContact}
+              updateNewContact={this.updateNewContact.bind(this)}
             />
           ) : (
             <SelectedMessages messages={this.state.selectedMessages} />
           )}
-          <MessageEntry onSend={this.sendMessage} />
+          <MessageEntry
+            newContact={this.state.newContact}
+            selectedContact={this.state.selectedContact}
+            loadContacts={this.loadContacts.bind(this)}
+            toggleNewContact={this.toggleNewContact.bind(this)}
+          />
         </div>
       </div>
     );
