@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie';
-import jwt from 'jsonwebtoken';
+// import jwt from 'jsonwebtoken';
 
 export const isLoggedIn = function() {
   return true;

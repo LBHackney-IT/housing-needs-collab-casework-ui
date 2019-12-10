@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 
 export default class MessageNewContact extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   formatNumber(number) {
     number = number
       .replace(/[^0-9]/g, '') // remove non digits
