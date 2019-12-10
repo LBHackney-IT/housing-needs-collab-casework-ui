@@ -37,7 +37,7 @@ export default class SelectedMessages extends Component {
                 <div
                   className="message"
                   dangerouslySetInnerHTML={{
-                    __html: m.message.replace('\n', '<br>')
+                    __html: m.message.replace(/\n/g, '<br>')
                   }}
                 />
               </div>
