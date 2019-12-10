@@ -5,7 +5,7 @@ import './index.css';
 export default class MessageEntry extends Component {
   constructor(props) {
     super(props);
-    this.state = { message: '', errorMessage: '' };
+    this.state = { message: '', errorMessage: '', isSending: false };
   }
 
   isValidMessage = () => {
@@ -32,6 +32,7 @@ export default class MessageEntry extends Component {
   };
 
   sendMessage = async () => {
+    this.setState({ errorMessage: '', isSending: true });
     if (!this.isValidMessage()) return;
 
     const existingContacts = this.props.contacts.filter(c => {
@@ -42,10 +43,20 @@ export default class MessageEntry extends Component {
       ? existingContacts[0]
       : await CreateContact(this.props.sendTo);
 
-    await SendMessage(contact.id, this.state.message);
+    const response = await SendMessage(contact.id, this.state.message);
+
+    if (response.message) {
+      this.setState({ message: '', errorMessage: '', isSending: false });
+    } else {
+      this.setState({
+        errorMessage:
+          'There was a problem sending the message, please try again.',
+        isSending: false
+      });
+    }
+
     await this.props.loadContacts(true);
     this.props.hideNewContact();
-    this.setState({ message: '', errorMessage: '' });
   };
 
   render() {
@@ -71,6 +82,7 @@ export default class MessageEntry extends Component {
           <button
             className="govuk-button lbh-button"
             onClick={this.sendMessage}
+            disabled={this.state.isSending}
           >
             Send
           </button>

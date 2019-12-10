@@ -20,6 +20,10 @@ export default class MessageNewContact extends Component {
     this.props.updateSendTo(event.target.name, number);
   };
 
+  updateJigsawId = event => {
+    this.props.updateSendTo(event.target.name, event.target.value);
+  };
+
   render() {
     return (
       <div>
@@ -43,6 +47,17 @@ export default class MessageNewContact extends Component {
             name="number"
             className="govuk-input"
             onChange={this.updateNumber}
+          />
+        </p>
+        <p>
+          <label className="govuk-label lbh-label" htmlFor="jigsawId">
+            Jigsaw Customer Id
+          </label>
+          <input
+            type="text"
+            name="jigsawId"
+            className="govuk-input"
+            onChange={this.updateJigsawId}
           />
         </p>
       </div>

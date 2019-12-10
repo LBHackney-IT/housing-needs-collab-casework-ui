@@ -38,7 +38,7 @@ export default class MessageCentre extends Component {
       sendTo: {
         name: this.state.selectedContact.name,
         number: this.state.selectedContact.number,
-        jigsawId: null
+        jigsawId: this.state.selectedContact.jigsawId
       }
     });
   };
@@ -49,7 +49,7 @@ export default class MessageCentre extends Component {
       sendTo: {
         name: '',
         number: '',
-        jigsawId: null
+        jigsawId: ''
       }
     });
   };
@@ -68,7 +68,7 @@ export default class MessageCentre extends Component {
         sendTo: {
           name: selectedContact.name,
           number: selectedContact.number,
-          jigsawId: null
+          jigsawId: selectedContact.jigsawId
         }
       });
     }
