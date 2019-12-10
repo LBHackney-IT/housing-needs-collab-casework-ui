@@ -1,11 +1,10 @@
 import Cookies from 'js-cookie';
-// import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 export const isLoggedIn = function() {
-  return true;
-  // const hackneyToken = Cookies.get('hackneyToken');
-  // if (!hackneyToken) return false;
-  // return jwt.decode(hackneyToken);
+  const hackneyToken = Cookies.get('hackneyToken');
+  if (!hackneyToken) return false;
+  return !!jwt.decode(hackneyToken);
 };
 
 export const hackneyToken = function() {
