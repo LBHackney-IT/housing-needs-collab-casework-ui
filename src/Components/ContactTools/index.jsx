@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 export default class ContactTools extends Component {
   render() {
-    const buttonText = this.props.messageNewContact
+    const buttonText = this.props.showNewContactForm
       ? 'Cancel'
       : 'Start New Conversation';
 
@@ -12,7 +12,7 @@ export default class ContactTools extends Component {
           <button
             className="govuk-button lbh-button"
             onClick={
-              this.props.messageNewContact
+              this.props.showNewContactForm
                 ? this.props.hideNewContact
                 : this.props.showNewContact
             }

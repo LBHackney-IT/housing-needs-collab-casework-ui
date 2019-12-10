@@ -14,7 +14,7 @@ export default class MessageCentre extends Component {
       contacts: [],
       selectedContact: {},
       selectedMessages: [],
-      messageNewContact: false,
+      showNewContactForm: false,
       sendTo: {},
       filter: ''
     };
@@ -34,7 +34,7 @@ export default class MessageCentre extends Component {
 
   hideNewContact = () => {
     this.setState({
-      messageNewContact: false,
+      showNewContactForm: false,
       sendTo: {
         name: this.state.selectedContact.name,
         number: this.state.selectedContact.number,
@@ -45,7 +45,7 @@ export default class MessageCentre extends Component {
 
   showNewContact = () => {
     this.setState({
-      messageNewContact: true,
+      showNewContactForm: true,
       sendTo: {
         name: '',
         number: '',
@@ -63,7 +63,7 @@ export default class MessageCentre extends Component {
   async selectContact(selectedContact) {
     const selectedMessages = await FetchMessages(selectedContact.id);
 
-    if (!this.state.messageNewContact) {
+    if (!this.state.showNewContactForm) {
       this.setState({
         sendTo: {
           name: selectedContact.name,
@@ -102,7 +102,7 @@ export default class MessageCentre extends Component {
       <div id="messageCentre">
         <div className="contactPane">
           <ContactTools
-            messageNewContact={this.state.messageNewContact}
+            showNewContactForm={this.state.showNewContactForm}
             hideNewContact={this.hideNewContact.bind(this)}
             showNewContact={this.showNewContact.bind(this)}
             setFilter={this.setFilter.bind(this)}
@@ -115,7 +115,7 @@ export default class MessageCentre extends Component {
           />
         </div>
         <div className="messagePane">
-          {this.state.messageNewContact ? (
+          {this.state.showNewContactForm ? (
             <MessageNewContact updateSendTo={this.updateSendTo.bind(this)} />
           ) : (
             <SelectedMessages messages={this.state.selectedMessages} />
