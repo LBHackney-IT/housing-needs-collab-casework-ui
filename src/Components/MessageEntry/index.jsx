@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
+import { username } from '../../Lib/Cookie';
 import { CreateContact, SendMessage } from '../../Lib';
 import './index.css';
 
 export default class MessageEntry extends Component {
   constructor(props) {
     super(props);
-    this.state = { message: '', errorMessage: '', isSending: false };
+    this.state = {
+      message: '',
+      errorMessage: '',
+      isSending: false
+    };
   }
 
   isValidMessage = () => {
@@ -68,16 +73,20 @@ export default class MessageEntry extends Component {
         >
           {this.state.errorMessage}
         </span>
-        <textarea
-          type="text"
-          className={`govuk-input ${
-            this.state.errorMessage ? 'govuk-input--error' : ''
-          }`}
-          placeholder="Type a message"
-          onChange={this.updateMessage}
-          style={{ height: `${this.state.textareaHeight}px` }}
-          value={this.state.message}
-        />
+        <div className="entry">
+          <textarea
+            type="text"
+            className={`govuk-input ${
+              this.state.errorMessage ? 'govuk-input--error' : ''
+            }`}
+            placeholder="Type a message"
+            onChange={this.updateMessage}
+            style={{ height: `${this.state.textareaHeight}px` }}
+            value={this.state.message}
+          />
+          <div className="username">{`- ${username()} @ Hackney`}</div>
+        </div>
+
         <div className="button">
           <button
             className="govuk-button lbh-button"

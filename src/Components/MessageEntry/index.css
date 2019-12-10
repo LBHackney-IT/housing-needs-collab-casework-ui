@@ -1,27 +1,36 @@
-.messageEntry{
-  width:100%;
+.messageEntry {
+  width: 100%;
 }
 
-.messageEntry textarea{
-  min-height:100px;
-  max-height:250px;
+.messageEntry .entry {
   grid-area: entry;
-  width:100%;
+  position: relative;
 }
 
+.messageEntry .entry textarea {
+  min-height: 100px;
+  max-height: 250px;
+  resize: none;
+}
 
-.messageEntry .button{
+.messageEntry .entry .username {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  color: grey;
+}
+
+.messageEntry .button {
   grid-area: button;
-  align-self: end;
 }
 
-.messageEntry button{
-  width:100px;
-  margin-left:10px;
+.messageEntry button {
+  width: 100px;
+  margin-left: 10px;
 }
 
 .messageEntry {
-  display:grid;
+  display: grid;
   grid-template-columns: auto 110px;
-  grid-template-areas: "entry button";
+  grid-template-areas: 'entry button';
 }
