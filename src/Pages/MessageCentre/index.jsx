@@ -15,45 +15,68 @@ export default class MessageCentre extends Component {
       selectedContact: {},
       selectedMessages: [],
       messageNewContact: false,
-      newContact: {},
+      sendTo: {},
       filter: ''
     };
   }
 
   async componentDidMount() {
-    await this.loadContacts();
+    await this.loadContacts(true);
+    this.timer = setInterval(async () => {
+      console.log('fetching messages...');
+      await this.loadContacts(false);
+    }, 30000);
   }
 
-  async componentDidUpdate() {
-    // scroll to latest message
-    const pane = document.querySelector('.messagePane ul');
-    if (pane) {
-      pane.scrollTop = pane.scrollHeight;
-    }
+  componentWillUnmount() {
+    this.timer = null;
   }
 
-  toggleNewContact = () => {
-    const messageNewContact = !this.state.messageNewContact;
-    const newContact = { name: '', number: '', jigsawId: null };
-    this.setState({ messageNewContact, newContact });
+  hideNewContact = () => {
+    this.setState({
+      messageNewContact: false,
+      sendTo: {
+        name: this.state.selectedContact.name,
+        number: this.state.selectedContact.number,
+        jigsawId: null
+      }
+    });
   };
 
-  resetNewContact = () => {
-    this.setState({ newContact: { name: '', number: '', jigsawId: null } });
+  showNewContact = () => {
+    this.setState({
+      messageNewContact: true,
+      sendTo: {
+        name: '',
+        number: '',
+        jigsawId: null
+      }
+    });
   };
 
-  updateNewContact(event) {
-    let newContact = this.state.newContact;
-    newContact[event.target.name] = event.target.value;
-    this.setState({ newContact });
+  updateSendTo(propName, value) {
+    let sendTo = this.state.sendTo;
+    sendTo[propName] = value;
+    this.setState({ sendTo });
   }
 
   async selectContact(selectedContact) {
     const selectedMessages = await FetchMessages(selectedContact.id);
+
+    if (!this.state.messageNewContact) {
+      this.setState({
+        sendTo: {
+          name: selectedContact.name,
+          number: selectedContact.number,
+          jigsawId: null
+        }
+      });
+    }
+
     this.setState({ selectedContact, selectedMessages });
   }
 
-  async loadContacts() {
+  async loadContacts(selectNewest) {
     let contacts = await FetchContacts();
     contacts = contacts.sort((a, b) => {
       return (
@@ -63,13 +86,11 @@ export default class MessageCentre extends Component {
       );
     });
 
-    if (contacts.length > 0) {
+    if (contacts.length > 0 && selectNewest) {
       this.selectContact(contacts[0]);
     }
 
-    this.setState({
-      contacts
-    });
+    this.setState({ contacts });
   }
 
   setFilter(event) {
@@ -82,7 +103,8 @@ export default class MessageCentre extends Component {
         <div className="contactPane">
           <ContactTools
             messageNewContact={this.state.messageNewContact}
-            toggleNewContact={this.toggleNewContact.bind(this)}
+            hideNewContact={this.hideNewContact.bind(this)}
+            showNewContact={this.showNewContact.bind(this)}
             setFilter={this.setFilter.bind(this)}
           />
           <Contacts
@@ -94,18 +116,15 @@ export default class MessageCentre extends Component {
         </div>
         <div className="messagePane">
           {this.state.messageNewContact ? (
-            <MessageNewContact
-              newContact={this.state.newContact}
-              updateNewContact={this.updateNewContact.bind(this)}
-            />
+            <MessageNewContact updateSendTo={this.updateSendTo.bind(this)} />
           ) : (
             <SelectedMessages messages={this.state.selectedMessages} />
           )}
           <MessageEntry
-            newContact={this.state.newContact}
-            selectedContact={this.state.selectedContact}
+            contacts={this.state.contacts}
+            sendTo={this.state.sendTo}
             loadContacts={this.loadContacts.bind(this)}
-            toggleNewContact={this.toggleNewContact.bind(this)}
+            hideNewContact={this.hideNewContact.bind(this)}
           />
         </div>
       </div>

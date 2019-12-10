@@ -2,41 +2,48 @@ import React, { Component } from 'react';
 import moment from 'moment';
 
 export default class SelectedMessages extends Component {
+  constructor(props) {
+    super(props);
+    this.messageList = React.createRef();
+  }
+
+  componentDidUpdate() {
+    // scroll to latest message
+    this.messageList.current.scrollTop = this.messageList.current.scrollHeight;
+  }
+
+  getDateComponent(thisDate, lastDate) {
+    if (thisDate === lastDate) return;
+    return (
+      <div className="date">
+        <div className="dateText">{thisDate}</div>
+      </div>
+    );
+  }
+
   render() {
     let lastDate;
     return (
-      <ul>
-        {this.props.messages
-          // sort needs to be moved server side
-          .sort((a, b) => (a.time > b.time ? 1 : -1))
-          .map((m, i) => {
-            const mDate = moment(m.time).format('DD/MM/YYYY');
+      <ul ref={this.messageList}>
+        {this.props.messages.map((m, i) => {
+          const thisDate = moment(m.time).format('DD/MM/YYYY');
+          const dateComponent = this.getDateComponent(thisDate, lastDate);
+          lastDate = thisDate;
 
-            let dateComponent;
-
-            if (lastDate !== mDate) {
-              lastDate = mDate;
-              dateComponent = (
-                <div className="date">
-                  <div className="dateText">{lastDate}</div>
-                </div>
-              );
-            }
-
-            return (
-              <li key={i}>
-                {dateComponent}
-                <div className={m.outgoing ? 'me' : 'them'}>
-                  <div
-                    className="message"
-                    dangerouslySetInnerHTML={{
-                      __html: m.message.replace('\n', '<br>')
-                    }}
-                  />
-                </div>
-              </li>
-            );
-          })}
+          return (
+            <li key={i}>
+              {dateComponent}
+              <div className={m.outgoing ? 'me' : 'them'}>
+                <div
+                  className="message"
+                  dangerouslySetInnerHTML={{
+                    __html: m.message.replace('\n', '<br>')
+                  }}
+                />
+              </div>
+            </li>
+          );
+        })}
       </ul>
     );
   }

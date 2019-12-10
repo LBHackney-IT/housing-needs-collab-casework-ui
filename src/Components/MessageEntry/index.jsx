@@ -3,22 +3,25 @@ import { CreateContact, SendMessage } from '../../Lib';
 import './index.css';
 
 export default class MessageEntry extends Component {
-  state = {
-    message: ''
-  };
+  constructor(props) {
+    super(props);
+    this.state = { message: '', errorMessage: '' };
+  }
 
-  sendMessage = async () => {
-    if (!this.state.message) return;
-
-    if (this.props.newContact.name) {
-      const contact = await CreateContact(this.props.newContact);
-      await SendMessage(contact.id, this.state.message);
-      this.props.toggleNewContact();
-    } else {
-      await SendMessage(this.props.selectedContact.id, this.state.message);
+  isValidMessage = () => {
+    if (!this.state.message) {
+      this.setState({ errorMessage: 'Message cannot be empty.' });
+      return false;
     }
-    await this.props.loadContacts();
-    this.setState({ message: '' });
+    if (!this.props.sendTo.name) {
+      this.setState({ errorMessage: 'Name cannot be empty.' });
+      return false;
+    }
+    if (!this.props.sendTo.number) {
+      this.setState({ errorMessage: 'Mobile number is incorrect.' });
+      return false;
+    }
+    return true;
   };
 
   updateMessage = event => {
@@ -28,21 +31,40 @@ export default class MessageEntry extends Component {
     });
   };
 
-  style() {
-    return {
-      height: `${this.state.textareaHeight}px`
-    };
-  }
+  sendMessage = async () => {
+    if (!this.isValidMessage()) return;
+
+    const existingContacts = this.props.contacts.filter(c => {
+      return c.number === this.props.sendTo.number;
+    });
+
+    const contact = existingContacts.length
+      ? existingContacts[0]
+      : await CreateContact(this.props.sendTo);
+
+    await SendMessage(contact.id, this.state.message);
+    await this.props.loadContacts(true);
+    this.props.hideNewContact();
+    this.setState({ message: '', errorMessage: '' });
+  };
 
   render() {
     return (
       <div className="messageEntry">
+        <span
+          id="input-with-error-message-error"
+          className="govuk-error-message"
+        >
+          {this.state.errorMessage}
+        </span>
         <textarea
           type="text"
-          className="govuk-input"
+          className={`govuk-input ${
+            this.state.errorMessage ? 'govuk-input--error' : ''
+          }`}
           placeholder="Type a message"
           onChange={this.updateMessage}
-          style={this.style()}
+          style={{ height: `${this.state.textareaHeight}px` }}
           value={this.state.message}
         />
         <div className="button">

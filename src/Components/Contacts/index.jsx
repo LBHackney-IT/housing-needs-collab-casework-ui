@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 
 export default class Contacts extends Component {
   filterContact(contact) {
@@ -12,11 +13,8 @@ export default class Contacts extends Component {
   }
 
   formatLastMessage(contact) {
-    if (contact.lastMessage && contact.lastMessage.message) {
-      return contact.lastMessage.message.length > 36
-        ? `${contact.lastMessage.message.substring(0, 34)}...`
-        : contact.lastMessage.message;
-    }
+    const last = contact.lastMessage.message;
+    return last.length > 36 ? `${last.substring(0, 34)}...` : last;
   }
 
   render() {
@@ -35,12 +33,15 @@ export default class Contacts extends Component {
               >
                 <div className="contactName">
                   {c.name}{' '}
-                  {c.lastMessage && c.lastMessage.direction === 'incoming' && (
-                    <div className="yourTurn">YOUR TURN</div>
+                  {c.lastMessage.direction === 'incoming' && (
+                    <div className="yourTurn">&#8617;</div>
                   )}
                 </div>
                 <div className="contactNumber">{c.number}</div>
-                <div className="lastMessage">{this.formatLastMessage(c)}</div>
+                <div className="lastMessage">
+                  {moment(c.lastMessage.time).format('DD/MM/YYYY HH:mm')} <br />
+                  {this.formatLastMessage(c)}
+                </div>
               </li>
             );
           })}

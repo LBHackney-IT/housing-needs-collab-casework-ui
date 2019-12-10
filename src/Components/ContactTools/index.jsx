@@ -2,14 +2,22 @@ import React, { Component } from 'react';
 
 export default class ContactTools extends Component {
   render() {
+    const buttonText = this.props.messageNewContact
+      ? 'Cancel'
+      : 'Start New Conversation';
+
     return (
       <div className="contactTools">
         <div className="newContact">
           <button
             className="govuk-button lbh-button"
-            onClick={this.props.toggleNewContact}
+            onClick={
+              this.props.messageNewContact
+                ? this.props.hideNewContact
+                : this.props.showNewContact
+            }
           >
-            {this.props.messageNewContact ? 'Cancel' : 'Message New Contact'}
+            {buttonText}
           </button>
         </div>
         <div className="findContact">
