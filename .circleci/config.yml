@@ -26,8 +26,6 @@ jobs:
 
       - run: yarn build
 
-      - run: yarn test
-
       - aws-s3/sync:
           from: build
           to: 's3://proto.collabtools.hackney.gov.uk/'
