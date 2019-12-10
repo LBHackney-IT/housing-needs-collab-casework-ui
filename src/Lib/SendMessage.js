@@ -1,7 +1,10 @@
+import { AuthHeader } from '.';
+
 async function SendMessage(id, message) {
   var headers = {
     'Content-Type': 'application/json',
-    'Access-Control-Origin': '*'
+    'Access-Control-Origin': '*',
+    Authorization: AuthHeader.headers.Authorization
   };
 
   const response = await fetch(

@@ -1,7 +1,10 @@
+import { AuthHeader } from '.';
+
 async function CreateContact(contact) {
   var headers = {
     'Content-Type': 'application/json',
-    'Access-Control-Origin': '*'
+    'Access-Control-Origin': '*',
+    Authorization: AuthHeader.headers.Authorization
   };
 
   const response = await fetch(`${process.env.REACT_APP_HN_API_URL}/contacts`, {
