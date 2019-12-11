@@ -4,6 +4,7 @@ export default class MessageNewContact extends Component {
   formatNumber(number) {
     number = number
       .replace(/[^0-9]/g, '') // remove non digits
+      .replace(/^0*/, '') // remove leading '00s'
       .replace(/^(44){1}/, '') // remove leading '44'
       .replace(/^0{1}/, ''); // remove leading '0'
 
