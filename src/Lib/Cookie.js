@@ -4,7 +4,13 @@ import jwt from 'jsonwebtoken';
 export const isLoggedIn = function() {
   const hackneyToken = Cookies.get('hackneyToken');
   if (!hackneyToken) return false;
-  return !!jwt.decode(hackneyToken);
+
+  const payload = jwt.decode(hackneyToken);
+  return (
+    payload &&
+    payload.groups &&
+    payload.groups.indexOf('housing-needs-collabtools-proto') > -1
+  );
 };
 
 export const username = function() {
