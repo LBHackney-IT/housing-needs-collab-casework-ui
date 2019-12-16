@@ -33,15 +33,18 @@ export default class Contacts extends Component {
               >
                 <div className="contactName">
                   {c.name}{' '}
-                  {!c.lastMessage.outgoing && (
+                  {c.lastMessage && !c.lastMessage.outgoing && (
                     <div className="yourTurn">&#8617;</div>
                   )}
                 </div>
                 <div className="contactNumber">{c.number}</div>
-                <div className="lastMessage">
-                  {moment(c.lastMessage.time).format('DD/MM/YYYY HH:mm')} <br />
-                  {this.formatLastMessage(c)}
-                </div>
+                {c.lastMessage && (
+                  <div className="lastMessage">
+                    {moment(c.lastMessage.time).format('DD/MM/YYYY HH:mm')}{' '}
+                    <br />
+                    {this.formatLastMessage(c)}
+                  </div>
+                )}
               </li>
             );
           })}
