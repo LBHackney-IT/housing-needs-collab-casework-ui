@@ -75,7 +75,7 @@
   justify-content: flex-start;
 }
 
-.messagePane .me {
+.messagePane .me, .messagePane .system {
   display: flex;
   justify-content: flex-end;
 }
@@ -87,6 +87,11 @@
 
 .messagePane .me .message {
   background-color: #9ae1ff;
+  text-align: right;
+}
+
+.messagePane .system .message {
+  background-color: #DDD;
   text-align: right;
 }
 

@@ -28,12 +28,14 @@ export default class SelectedMessages extends Component {
         {this.props.messages.map((m, i) => {
           const thisDate = moment(m.time).format('DD/MM/YYYY');
           const dateComponent = this.getDateComponent(thisDate, lastDate);
+          let className = m.outgoing ? 'me' : 'them';
+          if (m.username === 'No Reply') className = 'system';
           lastDate = thisDate;
 
           return (
             <li key={i}>
               {dateComponent}
-              <div className={m.outgoing ? 'me' : 'them'}>
+              <div className={className}>
                 <div
                   className="message"
                   dangerouslySetInnerHTML={{
