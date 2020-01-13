@@ -127,7 +127,7 @@ export default class MessageCentre extends Component {
           ) : (
             <SelectedMessages messages={this.state.selectedMessages} />
           )}
-          {this.state.contactEnabled ? (
+          {this.state.contactEnabled || this.state.showNewContactForm ? (
             <MessageEntry
               contacts={this.state.contacts}
               sendTo={this.state.sendTo}
