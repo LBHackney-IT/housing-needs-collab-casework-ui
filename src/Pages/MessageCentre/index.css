@@ -44,7 +44,8 @@
 .yourTurn {
   color: purple;
   font-weight: normal;
-  padding: 2px 5px;
+  margin-top: -10px;
+  font-size: 40pt;
 }
 
 .contactNumber {

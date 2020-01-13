@@ -34,7 +34,7 @@ export default class Contacts extends Component {
                 <div className="contactName">
                   {c.name}{' '}
                   {c.lastMessage && !c.lastMessage.outgoing && (
-                    <div className="yourTurn">&#8617;</div>
+                    <div className="yourTurn">&#8226;</div>
                   )}
                 </div>
                 <div className="contactNumber">{c.number}</div>
