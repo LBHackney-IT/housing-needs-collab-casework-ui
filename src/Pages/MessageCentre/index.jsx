@@ -72,8 +72,11 @@ export default class MessageCentre extends Component {
         }
       });
     }
-
-    this.setState({ selectedContact, selectedMessages });
+    const contactEnabled =
+      selectedMessages[selectedMessages.length - 1].message
+        .toLowerCase()
+        .trim() !== 'stop';
+    this.setState({ selectedContact, selectedMessages, contactEnabled });
   }
 
   async loadContacts(selectNewest) {
@@ -124,12 +127,14 @@ export default class MessageCentre extends Component {
           ) : (
             <SelectedMessages messages={this.state.selectedMessages} />
           )}
-          <MessageEntry
-            contacts={this.state.contacts}
-            sendTo={this.state.sendTo}
-            loadContacts={this.loadContacts.bind(this)}
-            hideNewContact={this.hideNewContact.bind(this)}
-          />
+          {this.state.contactEnabled ? (
+            <MessageEntry
+              contacts={this.state.contacts}
+              sendTo={this.state.sendTo}
+              loadContacts={this.loadContacts.bind(this)}
+              hideNewContact={this.hideNewContact.bind(this)}
+            />
+          ) : null}
         </div>
       </div>
     );
