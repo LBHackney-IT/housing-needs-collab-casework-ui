@@ -89,14 +89,6 @@ export default class MessageCentre extends Component {
       );
     });
 
-    // if (contacts.length > 0) {
-    // if (selectNewest) {
-    //   this.selectContact(contacts[0]);
-    // } else {
-    // this.selectContact(this.state.selectedContact);
-    // }
-    // }
-
     this.setState({ contacts });
   }
 

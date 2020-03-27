@@ -34,6 +34,9 @@ export default class Contacts extends Component {
         {this.props.contacts
           .filter(c => this.filterContact(c))
           .map((c, i) => {
+            if (i === 0 && !this.props.selectedContact.id) {
+              this.props.selectContact(c);
+            }
             return (
               <li
                 key={i}
