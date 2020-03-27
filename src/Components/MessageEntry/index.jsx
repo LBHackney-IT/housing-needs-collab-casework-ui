@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { username } from '../../Lib/Cookie';
+import { user } from '../../Lib/Cookie';
 import { CreateContact, SendMessage } from '../../Lib';
 import './index.css';
 
@@ -84,7 +84,7 @@ export default class MessageEntry extends Component {
             style={{ height: `${this.state.textareaHeight}px` }}
             value={this.state.message}
           />
-          <div className="username">{`- ${username()} @ Hackney`}</div>
+          <div className="username">{`- ${user().username} @ Hackney`}</div>
         </div>
 
         <div className="button">

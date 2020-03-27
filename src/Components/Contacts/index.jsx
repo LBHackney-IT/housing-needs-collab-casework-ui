@@ -1,8 +1,19 @@
 import React, { Component } from 'react';
 import moment from 'moment';
+import { user } from '../../Lib/Cookie';
 
 export default class Contacts extends Component {
   filterContact(contact) {
+    if (!this.props.filter) {
+      if (!contact.lastMessage) {
+        return false;
+      }
+
+      if (contact.lastMessage && contact.lastMessage.userEmail) {
+        return contact.lastMessage.userEmail === user().email;
+      }
+    }
+
     const includes = (str, sub) =>
       str && str.toLowerCase().includes(sub.toLowerCase());
 

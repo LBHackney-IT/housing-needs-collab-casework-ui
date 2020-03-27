@@ -13,11 +13,14 @@ export const isLoggedIn = function() {
   );
 };
 
-export const username = function() {
+export const user = function() {
   const hackneyToken = Cookies.get('hackneyToken');
   if (!hackneyToken) return false;
   const decoded = jwt.decode(hackneyToken);
-  return decoded ? decoded.name : '';
+  return {
+    username: decoded ? decoded.name : '',
+    email: decoded ? decoded.email : ''
+  };
 };
 
 export const hackneyToken = function() {
